@@ -43,5 +43,6 @@
     MapPin(0,   LED2,               PinLED2) \
     MapPin(0,   LED3,               PinLED3) \
     MapPin(0,   Status_OVP,         PinGPO_OVP) \
-    MapPin(0,   Status_LVP,         PinGPO_LVP)
+    MapPin(0,   Status_LVP,         PinGPO_LVP) \
+    MapPin(0,   Always_On,          PinAlarm)
 // clang-format on

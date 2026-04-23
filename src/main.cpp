@@ -7,6 +7,26 @@
 #include <BatShutoff.h>
 #include <Balancer.h>
 #include <ModbusToWorld.h>
+
+// ============================================================================
+// Flash-Zeit Konfiguration
+// ----------------------------------------------------------------------------
+// Die folgenden Defines dienen dazu, das Board einmalig zu initialisieren oder
+// Stammdaten zu setzen. Nach dem Flashen mit aktivem Define sollte die Zeile
+// wieder auskommentiert und neu geflasht werden, damit bei einem Neustart
+// nicht jedes Mal das Dateisystem zurückgesetzt bzw. die Werte überschrieben
+// werden.
+//
+// Dateisystem komplett neu anlegen (löscht Seriennummer, Kapazität, ...):
+// #define RESET_FILESYSTEM
+//
+// Seriennummer einmalig setzen (max. 12 Zeichen):
+// #define SET_SERIAL_NUMBER 2617120
+//
+// Kapazität der Batterie in Ah einmalig setzen (float):
+// (Max. Lade-/Entladestrom werden daraus automatisch als Cap/2 abgeleitet.)
+// #define SET_CAPACITY 400.0f
+// ============================================================================
 // function to blink LED3
 void blink()
 {
@@ -57,11 +77,26 @@ void calculateSoc()
 // Function to setup the system
 void setup()
 {
-  /**
-   * ACHTUNG: hiermit kann das Dateisystem neu angelegt werden.
-   */
-  // Store::reset(true);
+  Store::setup();
   Cli::setup(115200, true, true, true, true);
+#ifdef RESET_FILESYSTEM
+  Store::reset(true);
+#endif // RESET_FILESYSTEM
+#ifdef SET_SERIAL_NUMBER
+  // NOLINTBEGIN (cppcoreguidelines-macro-usage)
+#define stringer_sn(s) #s
+#define str_sn(s) stringer_sn(s)
+  char newSerialNumber[8] = str_sn(SET_SERIAL_NUMBER);
+#undef str_sn
+#undef stringer_sn
+  // NOLINTEND
+  newSerialNumber[sizeof(newSerialNumber) - 1] = '\0';
+  Store::forbidden_write("SN", newSerialNumber, true);
+#endif // SET_SERIAL_NUMBER
+#ifdef SET_CAPACITY
+  float newCapacity = SET_CAPACITY;
+  Store::forbidden_write("Cap", newCapacity, true);
+#endif // SET_CAPACITY
   Signals::Init();
   // ModBus::setup();
   blink();
@@ -71,23 +106,36 @@ void setup()
 #define str(s) stringer(s)
   greet = greet + str(SW_VERSION);
   char hwName[16] = str(HW_NAME);
-  char hwVersion[8] = str(HW_VERSION);
+  char hwVersion[16] = str(HW_VERSION);
 #undef str
 #undef stringer
   // NOLINTEND
-  Store::forbidden_write("HW_V", hwVersion, true);
-  Store::forbidden_write("HW_N", hwName, true);
+  hwName[sizeof(hwName) - 1] = '\0';
+  hwVersion[sizeof(hwVersion) - 1] = '\0';
+  // Nur schreiben, wenn die Datei noch nicht existiert. Ein erneutes
+  // forbidden_write(..., true) wuerde die Datei aufgrund eines Library-Bugs
+  // (trash setzen, aber nicht neu schreiben) unbrauchbar machen.
+  if (Store::fileExists("HW_V") != Store::Ok)
+  {
+    Store::forbidden_write("HW_V", hwVersion, false);
+  }
+  if (Store::fileExists("HW_N") != Store::Ok)
+  {
+    Store::forbidden_write("HW_N", hwName, false);
+  }
   Store::read("HW_N", hwName);
   Store::read("HW_V", hwVersion);
+  hwName[sizeof(hwName) - 1] = '\0';
+  hwVersion[sizeof(hwVersion) - 1] = '\0';
   greet = greet + " on your ";
   greet = greet + hwName;
   greet = greet + " (";
   greet = greet + hwVersion;
   greet = greet + ") in Mapping-Mode ";
   greet = greet + Mapping::ActualMap();
-  char serialNumber[12];
-  Store::setup();
+  char serialNumber[8] = {0};
   Store::ErrorCode error = Store::read("SN", serialNumber);
+  serialNumber[sizeof(serialNumber) - 1] = '\0';
   switch (error)
   {
   case Store::Ok:
@@ -104,7 +152,10 @@ void setup()
     break;
   }
   greet = greet + "\nType 'help' for a list of commands";
-  ModbusToWorld::setup(1, 9600, 100);
+  // ModbusToWorld::setup() wird bereits in Signals::Init() aufgerufen.
+  // Ein zweiter Aufruf würde über ModbusRTUServer.begin() -> end() die
+  // bereits konfigurierten Holding-Register-Mappings wieder löschen und
+  // führte dadurch zu "illegal data address"-Antworten.
   taskManager.yieldForMicros(5000000);
   BatShutoff::setup(1000);
   Balancer::setup(10000, 4, 2000, Balancer::Single);
