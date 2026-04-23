@@ -20,7 +20,7 @@
 // Dateisystem komplett neu anlegen (löscht Seriennummer, Kapazität, ...):
 // #define RESET_FILESYSTEM
 //
-// Seriennummer einmalig setzen (max. 12 Zeichen):
+// Seriennummer einmalig setzen (max. 8 Zeichen):
 // #define SET_SERIAL_NUMBER 2617120
 //
 // Kapazität der Batterie in Ah einmalig setzen (float):
