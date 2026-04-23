@@ -65,8 +65,6 @@
     Pin(PinBU_C8,           PH0,        DigitalOutputPin,           1.0,    0.0,    false,  false,  "BU Cell 8") \
     Pin(PinLED1,            PC13,       DigitalOutputPin,           1.0,    0.0,    false,  false,  "LED 1") \
     Pin(PinLED2,            PC14,       DigitalOutputPin,           1.0,    0.0,    false,  false,  "LED 2") \
-    Pin(PinLED3,            PC15,       DigitalOutputPin,           1.0,    0.0,    false,  false,  "LED 3") \
-    Pin(PinShunt,           PC5,        AnalogInputPin,             1.0,    0.0,    false,  false,  "Shunt") \
-    Pin(PinFBShunt,         PA1,        AnalogInputPin,             1.0,    0.0,    false,  false,  "Feedback Shunt") \
-    Pin(PinV_GND,           PC0,        AnalogInputPin,             1.0,    0.0,    true,   false,  "Virtual Ground")
+    Pin(PinLED3,            PC15,       DigitalOutputPin,           1.0,    0.0,    false,  false,  "LED 3")\
+    Pin(PinAlarm,           PC11,       DigitalOutputPin,           1.0,    0.0,    false,  false,  "Alarm")
 // clang-format on

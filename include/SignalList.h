@@ -78,6 +78,7 @@
   Signal(Status_LVP,          DigitalOutput,        "",   1.0,    0.0,      1,    10,     0,        false,  false,  NoRegister,             "Status of the Low Voltage Protection") \
   Signal(Alarm,               DigitalOutput,        "",   1.0,    0.0,      0,    10,     0,        false,  false,  NoRegister,             "Alarm Signal") \
   Signal(AD_C_All,            VirtualAnalogOutput,  "V",  1.0,    0.0,      3*8,  3,      0,        false,  false,  Battery_Voltage,        "Electric potential of all battery cells") \
-  Signal(Soc,                 VirtualAnalogOutput,  "%",  1.0,    0.0,      50,   3,      0,        false,  false,  Battery_SOC,            "State of Charge of the battery")
+  Signal(Soc,                 VirtualAnalogOutput,  "%",  1.0,    0.0,      50,   3,      0,        false,  false,  Battery_SOC,            "State of Charge of the battery") \
+  Signal(Always_On,           DigitalOutput,        "",   1.0,    0.0,      1,    10,     0,        false,  false,  NoRegister,             "Signal that is always on")
 // clang-format on
 #endif // SIGNALLIST_H
