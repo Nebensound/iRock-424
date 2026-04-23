@@ -54,6 +54,7 @@
     Pin(PinAD_C8,           PC1,        AnalogInputPin,             2.0,    0.0,    false,  false,  "Cell 8 voltage") \
     Pin(PinGPO_LVP,         PC9,        DigitalOutputPin,           1.0,    0.0,    true,   false,  "GPO LVP") \
     Pin(PinGPO_OVP,         PB6,        DigitalOutputPin,           1.0,    0.0,    true,   false,  "GPO UVP") \
+    Pin(PinGPO_Alarm,       PC11,       DigitalOutputPin,           1.0,    0.0,    true,   false,  "GPO Alarm") \
     Pin(PinBU_C1,           PA8,        DigitalOutputPin,           1.0,    0.0,    false,  false,  "BU Cell 1") \
     Pin(PinBU_C2,           PC7,        DigitalOutputPin,           1.0,    0.0,    false,  false,  "BU Cell 2") \
     Pin(PinBU_C3,           PC6,        DigitalOutputPin,           1.0,    0.0,    false,  false,  "BU Cell 3") \
